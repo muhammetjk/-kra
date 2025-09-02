@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İkra'ya Özel Hediyem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e6d4ff, #d0b2ff, #c19dff);
+            color: #4a2c82;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(106, 63, 173, 0.2);
+            max-width: 95%;
+            width: 500px;
+            margin: 20px auto;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            color: #6b3fa0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            line-height: 1.6;
+        }
+        
+        .special-message {
+            font-size: 1.4rem;
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(157, 114, 212, 0.2);
+            border-radius: 15px;
+            color: #5c2d91;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .click-text {
+            margin-top: 25px;
+            font-size: 1.3rem;
+            opacity: 0;
+            padding: 12px 24px;
+            background: rgba(157, 114, 212, 0.2);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            color: #5c2d91;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(106, 63, 173, 0.2);
+        }
+        
+        .click-text:hover {
+            background: rgba(157, 114, 212, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        /* Müzik çalar stil */
+        .music-player {
+            margin-top: 30px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+        
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .control-btn {
+            background: #9d72d4;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(106, 63, 173, 0.3);
+        }
+        
+        .control-btn:hover {
+            background: #8a5ac0;
+            transform: scale(1.1);
+        }
+        
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            font-size: 22px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(157, 114, 212, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: #7e57c2;
+            border-radius: 5px;
+            transition: width 0.1s linear;
+        }
+        
+        .time-container {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #6b3fa0;
+            margin-top: 5px;
+        }
+        
+        .song-title {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #6b3fa0;
+            font-weight: 500;
+        }
+        
+        /* Animasyonlar */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); display: none; }
+        }
+        
+        /* Arkaplan animasyon elementleri */
+        .animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(20deg); }
+        }
+        
+        .floating-item {
+            position: absolute;
+            opacity: 0.5;
+            animation: floatAround 15s linear infinite;
+            font-size: 24px;
+            color: #7e57c2;
+        }
+        
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, 40px) rotate(90deg); }
+            50% { transform: translate(0, 80px) rotate(180deg); }
+            75% { transform: translate(-30px, 40px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .visible {
+            display: block;
+            animation: fadeIn 1s forwards;
+        }
+        
+        /* Mobil uyumluluk */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px;
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .message {
+                font-size: 1.1rem;
+                padding: 12px;
+            }
+            
+            .special-message {
+                font-size: 1.2rem;
+                padding: 15px;
+            }
+            
+            .click-text {
+                font-size: 1.1rem;
+                padding: 10px 20px;
+            }
+            
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+            
+            .play-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 20px;
+            }
+            
+            .music-player {
+                padding: 15px;
+            }
+        }
+        
+        /* Buton stilleri */
+        .btn {
+            background: #9d72d4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 4px 8px rgba(106, 63, 173, 0.3);
+        }
+        
+        .btn:hover {
+            background: #8a5ac0;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(106, 63, 173, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Arkaplan animasyon elementleri -->
+    <div class="animation-container" id="animationContainer"></div>
+    
+    <div class="container">
+        <h1>İkra'ya Özel Hediyem 💜</h1>
+        
+        <div class="message">
+            <p>İkra Hanım 4dakikada bu kadar süreyi aştık ama elimden gelen en hızlısı buydu☺️</p>
+        </div>
+        
+        <div class="special-message" id="specialMessage">
+            Ben de mor rengini çok severim!
+        </div>
+        
+        <div class="click-text" id="clickText">
+            Tıklayınız İkra Hanım
+        </div>
+        
+        <div class="music-player" id="musicPlayer">
+            <div class="player-controls">
+                <button class="control-btn" id="prevBtn">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-btn" id="playBtn">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn" id="nextBtn">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+            <div class="progress-container" id="progressContainer">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="time-container">
+                <span id="currentTime">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+            <div class="song-title" id="songTitle">Şu an çalan: Mutluluk Şarkısı</div>
+        </div>
+        
+        <button class="btn" id="restartBtn" style="display: none;">
+            <i class="fas fa-redo"></i> Tekrar Göster
+        </button>
+    </div>
+
+    <script>
+        // Arkaplan animasyonu oluştur
+        function createAnimations() {
+            const container = document.getElementById('animationContainer');
+            
+            // Baloncuklar oluştur
+            for (let i = 0; i < 12; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                const size = Math.random() * 50 + 20;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${Math.random() * 100}vw`;
+                bubble.style.top = `${Math.random() * 100}vh`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(bubble);
+            }
+            
+            // Yüzen elementler oluştur
+            const symbols = ['💜', '✨', '🎵', '🎶', '🎁', '🌸'];
+            for (let i = 0; i < 15; i++) {
+                const item = document.createElement('div');
+                item.classList.add('floating-item');
+                item.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+                item.style.left = `${Math.random() * 100}vw`;
+                item.style.top = `${Math.random() * 100}vh`;
+                item.style.animationDelay = `${Math.random() * 5}s`;
+                item.style.fontSize = `${Math.random() * 20 + 15}px`;
+                container.appendChild(item);
+            }
+        }
+        
+        // Müzik çalar işlevselliği
+        function setupMusicPlayer() {
+            const musicPlayer = document.getElementById('musicPlayer');
+            const playBtn = document.getElementById('playBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progress = document.getElementById('progress');
+            const currentTimeEl = document.getElementById('currentTime');
+            const durationEl = document.getElementById('duration');
+            const songTitleEl = document.getElementById('songTitle');
+            const restartBtn = document.getElementById('restartBtn');
+            
+            // Müzik dosyası - gerçek uygulamada buraya müzik dosyanızın yolunu yazmalısınız
+            const music = new Audio();
+            // Örnek bir şarkı linki - gerçek uygulamada kendi şarkınızı eklemelisiniz
+            // music.src = 'audio/mutluluk-sarkisi.mp3';
+            music.src = 'audio/mutluluk-sarkisi.mp3';
+            // Müzik çalma durumu
+            let isPlaying = false;
+            
+            // Müziği çal
+            function playMusic() {
+                isPlaying = true;
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                music.play();
+            }
+            
+            // Müziği duraklat
+            function pauseMusic() {
+                isPlaying = false;
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                music.pause();
+            }
+            
+            // Play/Pause butonu
+            playBtn.addEventListener('click', () => {
+                isPlaying ? pauseMusic() : playMusic();
+            });
+            
+            // İlerleme çubuğunu güncelle
+            music.addEventListener('timeupdate', () => {
+                if (music.duration) {
+                    const progressPercent = (music.currentTime / music.duration) * 100;
+                    progress.style.width = `${progressPercent}%`;
+                    
+                    // Zamanı güncelle
+                    const currentMinutes = Math.floor(music.currentTime / 60);
+                    const currentSeconds = Math.floor(music.currentTime % 60);
+                    currentTimeEl.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
+                    
+                    // Toplam süre
+                    const durationMinutes = Math.floor(music.duration / 60);
+                    const durationSeconds = Math.floor(music.duration % 60);
+                    durationEl.textContent = `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
+                }
+            });
+            
+            // İlerleme çubuğunda tıklama
+            progressContainer.addEventListener('click', (e) => {
+                const width = progressContainer.clientWidth;
+                const clickX = e.offsetX;
+                const duration = music.duration;
+                
+                music.currentTime = (clickX / width) * duration;
+            });
+            
+            // Şarkı bittiğinde
+            music.addEventListener('ended', () => {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                progress.style.width = '0%';
+                music.currentTime = 0;
+                isPlaying = false;
+            });
+            
+            // Önceki/Sonraki şarkı butonları (basit implementasyon)
+            prevBtn.addEventListener('click', () => {
+                music.currentTime = 0;
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                music.currentTime = Math.min(music.currentTime + 10, music.duration);
+            });
+            
+            // Yeniden başlat butonu
+            restartBtn.addEventListener('click', () => {
+                restartExperience();
+            });
+            
+            return music;
+        }
+        
+        // Deneyimi yeniden başlat
+        function restartExperience() {
+            document.getElementById('specialMessage').style.display = 'none';
+            document.getElementById('clickText').style.opacity = '0';
+            document.getElementById('musicPlayer').style.display = 'none';
+            document.getElementById('restartBtn').style.display = 'none';
+            
+            // 3 saniye sonra "Tıklayınız İkra Hanım" butonunu göster
+            setTimeout(() => {
+                document.getElementById('clickText').style.opacity = '1';
+            }, 3000);
+        }
+        
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            createAnimations();
+            const music = setupMusicPlayer();
+            
+            // 3 saniye sonra "Tıklayınız İkra Hanım" butonunu göster
+            setTimeout(() => {
+                document.getElementById('clickText').style.opacity = '1';
+            }, 3000);
+            
+            // Butona tıklandığında
+            document.getElementById('clickText').addEventListener('click', function() {
+                this.style.opacity = '0';
+                
+                // Özel mesajı göster
+                const message = document.getElementById('specialMessage');
+                message.style.display = 'block';
+                message.style.animation = 'fadeInOut 5s forwards';
+                
+                // 5 saniye sonra mesajı gizle ve müzik çaları göster
+                setTimeout(() => {
+                    message.style.display = 'none';
+                    document.getElementById('musicPlayer').style.display = 'block';
+                    document.getElementById('restartBtn').style.display = 'block';
+                    
+                    // Burada müzik dosyasını yükle
+                    // Gerçek uygulamada: music.src = 'müzik-dosyanizin-yolu.mp3';
+                    // Örnek: music.src = 'music/special-song.mp3';
+                    // Şimdilik sessiz bir ses dosyası kullanıyoruz
+                    
+                    // Müziği yükle ve çalmaya hazırla
+                    music.load();
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
